@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ScanSearch, Download, Trash2 } from "lucide-react";
+import { Download, Trash2 } from "lucide-react";
 
 interface Props {
   imageCount: number;
@@ -9,23 +9,7 @@ interface Props {
 
 export default function AppHeader({ imageCount, onExport, onClear }: Props) {
   return (
-    <header className="flex items-center justify-between py-4">
-      <motion.div
-        initial={{ opacity: 0, x: -12 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="flex items-center gap-3"
-      >
-        <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center">
-          <ScanSearch className="w-5 h-5 text-primary" />
-        </div>
-        <div>
-          <h1 className="text-lg font-semibold tracking-tight">
-            <span className="gradient-text">MetaLens</span>
-          </h1>
-          <p className="text-xs text-muted-foreground">Image metadata explorer</p>
-        </div>
-      </motion.div>
-
+    <header className="flex items-center justify-end py-4">
       {imageCount > 0 && (
         <motion.div
           initial={{ opacity: 0, x: 12 }}

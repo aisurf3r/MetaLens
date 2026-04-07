@@ -1,0 +1,89 @@
+import { useEffect, useRef } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { ImageFile } from "@/types/image";
+import { motion } from "framer-motion";
+import { MapPin } from "lucide-react";
+
+// Fix default marker icons
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
+  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+});
+
+function FitBounds({ positions }: { positions: [number, number][] }) {
+  const map = useMap();
+  useEffect(() => {
+    if (positions.length === 0) return;
+    if (positions.length === 1) {
+      map.setView(positions[0], 13);
+    } else {
+      map.fitBounds(positions, { padding: [40, 40] });
+    }
+  }, [positions, map]);
+  return null;
+}
+
+interface Props {
+  images: ImageFile[];
+  onSelect: (id: string) => void;
+}
+
+export default function MapView({ images, onSelect }: Props) {
+  const gpsImages = images.filter((img) => img.gps);
+
+  if (gpsImages.length === 0) {
+    return (
+      <div className="glass-card p-8 flex flex-col items-center justify-center text-center min-h-[250px]">
+        <MapPin className="w-10 h-10 text-muted-foreground/40 mb-3" />
+        <p className="text-muted-foreground text-sm">No GPS data found in uploaded images</p>
+        <p className="text-muted-foreground/60 text-xs mt-1">Upload photos with location data to see them on the map</p>
+      </div>
+    );
+  }
+
+  const positions: [number, number][] = gpsImages.map((img) => [img.gps!.latitude, img.gps!.longitude]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="glass-card overflow-hidden rounded-xl"
+    >
+      <MapContainer
+        center={positions[0]}
+        zoom={13}
+        className="w-full h-[300px] md:h-[400px]"
+        scrollWheelZoom
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        />
+        <FitBounds positions={positions} />
+        {gpsImages.map((img) => (
+          <Marker
+            key={img.id}
+            position={[img.gps!.latitude, img.gps!.longitude]}
+            eventHandlers={{ click: () => onSelect(img.id) }}
+          >
+            <Popup>
+              <div className="flex items-center gap-2">
+                <img src={img.url} alt={img.name} className="w-12 h-12 rounded object-cover" />
+                <div>
+                  <p className="text-xs font-medium">{img.name}</p>
+                  <p className="text-[10px] opacity-70">
+                    {img.gps!.latitude.toFixed(4)}, {img.gps!.longitude.toFixed(4)}
+                  </p>
+                </div>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+      </MapContainer>
+    </motion.div>
+  );
+}

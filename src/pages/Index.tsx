@@ -37,7 +37,7 @@ const Index = () => {
               <ScanSearch className="w-8 h-8 md:w-10 md:h-10 text-primary" />
             </div>
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-center">
-              <span className="gradient-text">MetaLens</span>
+              <span className="gradient-text gradient-text-animated">MetaLens</span>
             </h1>
             <p className="text-muted-foreground text-sm md:text-base mt-3 tracking-wide">
               Image metadata explorer

@@ -92,12 +92,63 @@
 
   .upload-zone {
     @apply border-2 border-dashed border-border/60 rounded-2xl transition-all duration-300;
+    background-image: none;
   }
 
   .upload-zone:hover,
   .upload-zone.drag-over {
-    @apply border-primary/60;
+    @apply border-transparent;
+    background-image: repeating-linear-gradient(
+      90deg,
+      hsl(var(--primary) / 0.6) 0,
+      hsl(var(--primary) / 0.6) 12px,
+      transparent 12px,
+      transparent 24px
+    ),
+    repeating-linear-gradient(
+      180deg,
+      hsl(var(--primary) / 0.6) 0,
+      hsl(var(--primary) / 0.6) 12px,
+      transparent 12px,
+      transparent 24px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      hsl(var(--primary) / 0.6) 0,
+      hsl(var(--primary) / 0.6) 12px,
+      transparent 12px,
+      transparent 24px
+    ),
+    repeating-linear-gradient(
+      180deg,
+      hsl(var(--primary) / 0.6) 0,
+      hsl(var(--primary) / 0.6) 12px,
+      transparent 12px,
+      transparent 24px
+    );
+    background-size: 100% 2px, 2px 100%, 100% 2px, 2px 100%;
+    background-position: 0 0, 100% 0, 0 100%, 0 0;
+    background-repeat: no-repeat;
+    animation: marching-ants 1s linear infinite;
     box-shadow: inset 0 0 40px -10px hsl(var(--primary) / 0.08), var(--shadow-glow);
+  }
+
+  .social-icon-btn {
+    @apply w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300;
+    color: hsl(var(--primary));
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+  }
+
+  .social-icon-btn:hover {
+    box-shadow: 0 0 16px hsl(var(--primary) / 0.5);
+    border-color: hsl(var(--primary) / 0.6);
+    transform: scale(1.1);
+  }
+
+  .gradient-text-animated {
+    background-size: 200% 200%;
+    animation: gradient-shift 4s ease-in-out infinite;
   }
 
   .metadata-key {

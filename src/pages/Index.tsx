@@ -5,7 +5,7 @@ import ImageGallery from "@/components/ImageGallery";
 import MetadataPanel from "@/components/MetadataPanel";
 import MapView from "@/components/MapView";
 import { motion } from "framer-motion";
-import { ScanSearch } from "lucide-react";
+import { ScanSearch, Github, Mail } from "lucide-react";
 
 const Index = () => {
   const { images, selected, selectedId, setSelectedId, addFiles, removeImage, clearAll, exportJSON } = useImageStore();
@@ -22,6 +22,24 @@ const Index = () => {
         }}
       />
 
+      {/* Floating social icons */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+        <a
+          href="https://github.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="social-icon-btn"
+        >
+          <Github className="w-5 h-5" />
+        </a>
+        <a
+          href="mailto:hello@example.com"
+          className="social-icon-btn"
+        >
+          <Mail className="w-5 h-5" />
+        </a>
+      </div>
+
       <div className="relative z-10">
         <div className="container max-w-7xl mx-auto px-4">
           <AppHeader imageCount={images.length} onExport={exportJSON} onClear={clearAll} />
@@ -37,7 +55,7 @@ const Index = () => {
               <ScanSearch className="w-8 h-8 md:w-10 md:h-10 text-primary" />
             </div>
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-center">
-              <span className="gradient-text">MetaLens</span>
+              <span className="gradient-text gradient-text-animated">MetaLens</span>
             </h1>
             <p className="text-muted-foreground text-sm md:text-base mt-3 tracking-wide">
               Image metadata explorer

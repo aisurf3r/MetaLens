@@ -111,10 +111,24 @@ const Index = () => {
               </motion.div>
             )}
           </div>
+
+          {/* Footer */}
+          <div className="flex items-center justify-center gap-4 py-8 border-t border-border/30">
+            <a
+              href="https://github.com/aisurf3r/MetaLens"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-icon-btn"
+            >
+              <Github className="w-5 h-5" />
+            </a>
+            <a
+              href="mailto:aisurf3r@gmail.com"
+              className="social-icon-btn"
+            >
+              <Mail className="w-5 h-5" />
+            </a>
+          </div>
         </div>
       </div>
     </div>
-  );
-};
-
-export default Index;

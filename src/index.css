@@ -208,3 +208,13 @@
 .leaflet-popup-tip {
   background: hsl(var(--card)) !important;
 }
+
+@keyframes marching-ants {
+  0% { background-position: 0 0, 100% 0, 100% 100%, 0 0; }
+  100% { background-position: 24px 0, 100% 24px, calc(100% - 24px) 100%, 0 calc(100% - 24px); }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}

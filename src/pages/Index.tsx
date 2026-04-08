@@ -17,15 +17,15 @@ const Index = () => {
         className="pointer-events-none fixed inset-0 z-0"
         style={{
           backgroundImage:
-            "linear-gradient(hsl(var(--border) / 0.35) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--border) / 0.35) 1px, transparent 1px)",
+            "linear-gradient(hsl(var(--border) / 0.25) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--border) / 0.25) 1px, transparent 1px)",
           backgroundSize: "64px 64px",
         }}
       />
 
-      {/* Footer social icons */}
-      <div className="relative z-10 flex items-center justify-center gap-4 py-8">
+      {/* Floating social icons */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
         <a
-          href="https://github.com/aisurf3r/MetaLens"
+          href="https://github.com"
           target="_blank"
           rel="noopener noreferrer"
           className="social-icon-btn"
@@ -33,7 +33,7 @@ const Index = () => {
           <Github className="w-5 h-5" />
         </a>
         <a
-          href="mailto:aisurf3r@gmail.com"
+          href="mailto:hello@example.com"
           className="social-icon-btn"
         >
           <Mail className="w-5 h-5" />
@@ -110,24 +110,6 @@ const Index = () => {
                 </div>
               </motion.div>
             )}
-          </div>
-
-          {/* Footer */}
-          <div className="flex items-center justify-center gap-4 py-8 border-t border-border/30">
-            <a
-              href="https://github.com/aisurf3r/MetaLens"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="social-icon-btn"
-            >
-              <Github className="w-5 h-5" />
-            </a>
-            <a
-              href="mailto:aisurf3r@gmail.com"
-              className="social-icon-btn"
-            >
-              <Mail className="w-5 h-5" />
-            </a>
           </div>
         </div>
       </div>

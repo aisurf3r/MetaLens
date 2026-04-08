@@ -5,7 +5,7 @@ import ImageGallery from "@/components/ImageGallery";
 import MetadataPanel from "@/components/MetadataPanel";
 import MapView from "@/components/MapView";
 import { motion } from "framer-motion";
-import { ScanSearch } from "lucide-react";
+import { ScanSearch, Github, Mail } from "lucide-react";
 
 const Index = () => {
   const { images, selected, selectedId, setSelectedId, addFiles, removeImage, clearAll, exportJSON } = useImageStore();

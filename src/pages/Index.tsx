@@ -22,6 +22,24 @@ const Index = () => {
         }}
       />
 
+      {/* Floating social icons */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+        <a
+          href="https://github.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="social-icon-btn"
+        >
+          <Github className="w-5 h-5" />
+        </a>
+        <a
+          href="mailto:hello@example.com"
+          className="social-icon-btn"
+        >
+          <Mail className="w-5 h-5" />
+        </a>
+      </div>
+
       <div className="relative z-10">
         <div className="container max-w-7xl mx-auto px-4">
           <AppHeader imageCount={images.length} onExport={exportJSON} onClear={clearAll} />

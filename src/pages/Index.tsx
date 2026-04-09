@@ -5,13 +5,13 @@ import ImageGallery from "@/components/ImageGallery";
 import MetadataPanel from "@/components/MetadataPanel";
 import MapView from "@/components/MapView";
 import { motion } from "framer-motion";
-import { ScanSearch, Github, Mail } from "lucide-react";
+import { ScanSearch } from "lucide-react";
 
 const Index = () => {
   const { images, selected, selectedId, setSelectedId, addFiles, removeImage, clearAll, exportJSON } = useImageStore();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
       <div
         className="pointer-events-none fixed inset-0 z-0"
         style={{
@@ -90,23 +90,6 @@ const Index = () => {
             )}
           </div>
         </div>
-      </div>
-
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex gap-4 pointer-events-auto bg-background/95 backdrop-blur-md px-5 py-3 rounded-2xl border shadow-xl">
-        <a
-          href="https://github.com/aisurf3r/MetaLens"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="social-icon-btn"
-        >
-          <Github className="w-5 h-5" />
-        </a>
-        <a
-          href="mailto:aisurf3r@gmail.com"
-          className="social-icon-btn"
-        >
-          <Mail className="w-5 h-5" />
-        </a>
       </div>
     </div>
   );

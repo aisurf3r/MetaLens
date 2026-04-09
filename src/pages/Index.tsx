@@ -21,7 +21,7 @@ const Index = () => {
         }}
       />
 
-      <div className="relative z-10 min-h-screen pb-24">
+      <div className="relative z-10">
         <div className="container max-w-7xl mx-auto px-4">
           <AppHeader imageCount={images.length} onExport={exportJSON} onClear={clearAll} />
 
@@ -42,7 +42,7 @@ const Index = () => {
             </p>
           </motion.div>
 
-          <div className="space-y-6">
+          <div className="space-y-6 pb-28">
             <UploadZone onFiles={addFiles} />
 
             {images.length > 0 && (
@@ -92,7 +92,7 @@ const Index = () => {
         </div>
       </div>
 
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex gap-4 pointer-events-auto bg-background/95 backdrop-blur-lg px-6 py-4 rounded-2xl border shadow-2xl">
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex gap-4 pointer-events-auto bg-background/95 backdrop-blur-md px-5 py-3 rounded-2xl border shadow-xl">
         <a
           href="https://github.com/aisurf3r/MetaLens"
           target="_blank"

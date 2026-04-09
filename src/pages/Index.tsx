@@ -23,7 +23,7 @@ const Index = () => {
       />
 
       {/* Fixed centered bottom social icons */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex gap-4">
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex gap-4 pointer-events-auto">
         <a
           href="https://github.com/aisurf3r/MetaLens"
           target="_blank"
@@ -62,7 +62,7 @@ const Index = () => {
             </p>
           </motion.div>
 
-          <div className="space-y-6 pb-12">
+          <div className="space-y-6 pb-28">
             {/* Upload */}
             <UploadZone onFiles={addFiles} />
 
@@ -88,14 +88,16 @@ const Index = () => {
                     />
                   </div>
 
-                  {/* Map */}
-                  <div>
-                    <h2 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                      Location Map
-                    </h2>
-                    <MapView images={images} onSelect={setSelectedId} />
-                  </div>
+                  {/* Map - only show when selected image has GPS */}
+                  {selected?.gps && (
+                    <div>
+                      <h2 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                        Location Map
+                      </h2>
+                      <MapView images={images.filter(i => i.gps)} onSelect={setSelectedId} />
+                    </div>
+                  )}
                 </div>
 
                 {/* Right: Metadata */}

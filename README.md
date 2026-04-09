@@ -1,5 +1,5 @@
 # 🔍 MetaLens
-<img width="1487" height="826" alt="{338AEA77-06FB-4E89-8B14-AA123986A33A}" src="https://github.com/user-attachments/assets/7d3dccbe-953d-4de3-87c3-d444b8430f0f" />
+<img width="1606" height="844" alt="{FBC9C4E5-F844-4100-B74C-0C0E1535C471}" src="https://github.com/user-attachments/assets/bb30b44e-aacd-4cf8-b6cd-d7e408571dac" />
 <img width="1505" height="908" alt="{484EC475-8A7E-464A-BD7D-5D69A2EA18B8}" src="https://github.com/user-attachments/assets/58b29a23-4024-465c-865b-b801423b1331" />
 
 

@@ -92,7 +92,8 @@ const Index = () => {
         </div>
       </div>
 
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex gap-4 pointer-events-auto bg-background/95 backdrop-blur-md px-5 py-3 rounded-2xl border shadow-xl">
+      {/* Iconos sociales - ahora con z-index más alto y sin fondo fuerte */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex gap-4 pointer-events-auto">
         <a
           href="https://github.com/aisurf3r/MetaLens"
           target="_blank"

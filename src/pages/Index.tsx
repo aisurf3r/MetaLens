@@ -23,7 +23,7 @@ const Index = () => {
       />
 
       {/* Fixed centered bottom social icons */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex gap-4 pointer-events-auto">
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex gap-4 pointer-events-auto">
         <a
           href="https://github.com/aisurf3r/MetaLens"
           target="_blank"

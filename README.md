@@ -1,4 +1,7 @@
 # 🔍 MetaLens
+<img width="1487" height="826" alt="{338AEA77-06FB-4E89-8B14-AA123986A33A}" src="https://github.com/user-attachments/assets/7d3dccbe-953d-4de3-87c3-d444b8430f0f" />
+<img width="1505" height="908" alt="{484EC475-8A7E-464A-BD7D-5D69A2EA18B8}" src="https://github.com/user-attachments/assets/58b29a23-4024-465c-865b-b801423b1331" />
+
 
 **Image metadata explorer** — Upload photos, inspect EXIF/IPTC/XMP data, visualize GPS locations on a map, and export everything as JSON.
 
@@ -91,6 +94,4 @@ src/
 
 MIT
 
-## 👤 Author
-
-**aisurf3r** — [GitHub](https://github.com/aisurf3r) · [Email](mailto:aisurf3r@gmail.com)
+**aisurf3r** — [GitHub](https://github.com/aisurf3r) 

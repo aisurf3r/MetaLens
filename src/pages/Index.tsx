@@ -12,7 +12,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background relative">
-      {/* Grid overlay */}
       <div
         className="pointer-events-none fixed inset-0 z-0"
         style={{
@@ -22,29 +21,10 @@ const Index = () => {
         }}
       />
 
-      {/* Fixed centered bottom social icons */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex gap-4 pointer-events-auto">
-        <a
-          href="https://github.com/aisurf3r/MetaLens"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="social-icon-btn"
-        >
-          <Github className="w-5 h-5" />
-        </a>
-        <a
-          href="mailto:aisurf3r@gmail.com"
-          className="social-icon-btn"
-        >
-          <Mail className="w-5 h-5" />
-        </a>
-      </div>
-
       <div className="relative z-10">
         <div className="container max-w-7xl mx-auto px-4">
           <AppHeader imageCount={images.length} onExport={exportJSON} onClear={clearAll} />
 
-          {/* Hero title */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -63,7 +43,6 @@ const Index = () => {
           </motion.div>
 
           <div className="space-y-6 pb-28">
-            {/* Upload */}
             <UploadZone onFiles={addFiles} />
 
             {images.length > 0 && (
@@ -73,7 +52,6 @@ const Index = () => {
                 transition={{ delay: 0.1 }}
                 className="grid grid-cols-1 lg:grid-cols-5 gap-6"
               >
-                {/* Left: Gallery */}
                 <div className="lg:col-span-3 space-y-6">
                   <div>
                     <h2 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
@@ -88,7 +66,6 @@ const Index = () => {
                     />
                   </div>
 
-                  {/* Map - only show when selected image has GPS */}
                   {selected?.gps && (
                     <div>
                       <h2 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
@@ -100,7 +77,6 @@ const Index = () => {
                   )}
                 </div>
 
-                {/* Right: Metadata */}
                 <div className="lg:col-span-2">
                   <h2 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary" />
@@ -114,6 +90,23 @@ const Index = () => {
             )}
           </div>
         </div>
+      </div>
+
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex gap-4 pointer-events-auto bg-background/95 backdrop-blur-md px-5 py-3 rounded-2xl border shadow-xl">
+        <a
+          href="https://github.com/aisurf3r/MetaLens"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="social-icon-btn"
+        >
+          <Github className="w-5 h-5" />
+        </a>
+        <a
+          href="mailto:aisurf3r@gmail.com"
+          className="social-icon-btn"
+        >
+          <Mail className="w-5 h-5" />
+        </a>
       </div>
     </div>
   );

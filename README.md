@@ -89,6 +89,7 @@ src/
 │   └── image.ts       # TypeScript interfaces
 └── index.css          # Design tokens & global styles
 ```
+TODO: fix mobile map loading. (fucking nightmare)
 
 ## 📄 License
 

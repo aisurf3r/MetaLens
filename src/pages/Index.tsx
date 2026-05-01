@@ -43,7 +43,7 @@ const Index = () => {
             </p>
           </motion.div>
 
-          <div className="space-y-6 pb-28">
+          <div className="space-y-6 pb-10">
             <UploadZone onFiles={addFiles} />
 
             {images.length > 0 && (

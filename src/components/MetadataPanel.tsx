@@ -1,7 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ImageFile } from "@/types/image";
-import { Info, Camera, Aperture, Timer, Ruler, MapPin, Calendar, FileText, Tag } from "lucide-react";
+import { Info, Camera, MapPin, FileText, Tag, Download, Eraser } from "lucide-react";
 import { useState } from "react";
+import { exportImageMetadata, downloadCleanCopy } from "@/lib/imageMeta";
+import { toast } from "sonner";
 
 interface Props {
   image: ImageFile | null;

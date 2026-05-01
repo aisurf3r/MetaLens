@@ -105,20 +105,19 @@ const Index = () => {
         </div>
       </div>
 
-      <footer className="relative z-10 mt-12 border-t border-border/40 py-5 flex flex-col items-center justify-center gap-2">
+      <footer
+        className="fixed bottom-0 inset-x-0 z-50 h-8 flex items-center justify-center text-[11px] sm:text-xs font-medium tracking-wide"
+        style={{ backgroundColor: "#18DCAB", color: "#0a1f1a" }}
+      >
         <a
           href="https://github.com/aisurf3r/MetaLens"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="GitHub repository"
-          className="transition-transform hover:scale-110"
-          style={{ color: "#18DCAB" }}
+          className="hover:underline font-semibold"
         >
-          <Github className="w-5 h-5" />
+          MetaLens
         </a>
-        <p className="text-xs tracking-wide" style={{ color: "#18DCAB" }}>
-          MetaLens — Image Metadata Explorer · Extractor · Eraser
-        </p>
+        <span className="mx-1">— Image Metadata Explorer · Extractor · Eraser</span>
       </footer>
     </div>
   );

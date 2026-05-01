@@ -14,13 +14,15 @@
 
 ## ✨ Features
 
-- 📁 **Multi-image upload** — Drag & drop or click to upload JPG, PNG, TIFF, and more
+- 📁 **Multi-image upload** — Drag & drop or click to upload JPG, PNG, TIFF, WebP and more
 - 🔍 **Rich metadata extraction** — View EXIF, IPTC, XMP, ICC, JFIF, and IHDR data
-- 🗺️ **Interactive map** — GPS coordinates displayed on an OpenStreetMap-powered map
-- 💾 **JSON export** — Download all extracted metadata as a structured JSON file
+- 🗺️ **Interactive map** — GPS coordinates on an OpenStreetMap map, shown only when the selected image has valid GPS data
+- 💾 **JSON export** — Per-image or full-batch metadata export
+- 🧹 **Metadata eraser** — Download a clean copy of any image with all EXIF/GPS/IPTC/XMP stripped (canvas re-encode)
+- 📱 **Mobile-safe map** — Hardened against the classic Leaflet "black screen / NaN LatLng" crash via error boundary, GPS validation and `invalidateSize` on mount
 - 🗑️ **Image management** — Remove individual images or clear all at once
-- 📱 **Responsive design** — Optimized for desktop, tablet, and mobile
-- ✨ **Modern UI** — Smooth animations, glassmorphism cards, and animated gradients
+- 🎨 **Modern UI** — Dark editorial theme, animated gradient title, marching-ants drop zone, glassmorphism cards
+- 🔗 **Minimal footer bar** — Fixed `#18DCAB` strip pinned to the bottom on every device
 
 ## 🚀 Getting Started
 

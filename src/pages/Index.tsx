@@ -56,8 +56,12 @@ const Index = () => {
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-center">
               <span className="gradient-text gradient-text-animated">MetaLens</span>
             </h1>
-            <p className="text-muted-foreground text-sm md:text-base mt-3 tracking-wide">
-              Image metadata explorer
+            <p className="text-sm md:text-base mt-3 tracking-wide font-medium">
+              <span style={{ color: "#18DCAB" }}>Explorer</span>
+              <span className="text-muted-foreground mx-1.5">·</span>
+              <span style={{ color: "hsl(var(--accent))" }}>Extractor</span>
+              <span className="text-muted-foreground mx-1.5">·</span>
+              <span style={{ color: "hsl(35 95% 60%)" }}>Eraser</span>
             </p>
           </motion.div>
 

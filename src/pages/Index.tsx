@@ -70,10 +70,11 @@ const Index = () => {
 
             {images.length > 0 && (
               <motion.div
+                ref={metadataSectionRef}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="grid grid-cols-1 lg:grid-cols-5 gap-6"
+                className="grid grid-cols-1 lg:grid-cols-5 gap-6 scroll-mt-4"
               >
                 <div className="lg:col-span-3 space-y-6">
                   <div>

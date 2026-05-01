@@ -17,6 +17,17 @@ const isValidGps = (gps: { latitude: number; longitude: number } | null | undefi
 
 const Index = () => {
   const { images, selected, selectedId, setSelectedId, addFiles, removeImage, clearAll, exportJSON } = useImageStore();
+  const metadataSectionRef = useRef<HTMLDivElement>(null);
+  const hasScrolledRef = useRef(false);
+
+  useEffect(() => {
+    if (images.length > 0 && !hasScrolledRef.current && metadataSectionRef.current) {
+      hasScrolledRef.current = true;
+      setTimeout(() => {
+        metadataSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 250);
+    }
+  }, [images.length]);
 
   return (
     <div className="min-h-screen bg-background relative pb-10">

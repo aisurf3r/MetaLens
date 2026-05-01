@@ -7,6 +7,7 @@ import MapView from "@/components/MapView";
 import MapErrorBoundary from "@/components/MapErrorBoundary";
 import { motion } from "framer-motion";
 import { ScanSearch } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 const isValidGps = (gps: { latitude: number; longitude: number } | null | undefined) =>
   !!gps &&

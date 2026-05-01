@@ -123,7 +123,7 @@ const Index = () => {
       </div>
 
       <footer
-        className="fixed bottom-0 inset-x-0 z-50 h-8 flex items-center justify-center text-[11px] sm:text-xs font-medium tracking-wide"
+        className="fixed bottom-0 inset-x-0 z-50 h-4 flex items-center justify-center text-[9px] sm:text-[10px] font-medium tracking-wide leading-none"
         style={{ backgroundColor: "#18DCAB", color: "#0a1f1a" }}
       >
         <a

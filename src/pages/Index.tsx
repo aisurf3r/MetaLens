@@ -7,6 +7,7 @@ import MapView from "@/components/MapView";
 import MapErrorBoundary from "@/components/MapErrorBoundary";
 import { motion } from "framer-motion";
 import { ScanSearch } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 const isValidGps = (gps: { latitude: number; longitude: number } | null | undefined) =>
   !!gps &&
@@ -16,9 +17,20 @@ const isValidGps = (gps: { latitude: number; longitude: number } | null | undefi
 
 const Index = () => {
   const { images, selected, selectedId, setSelectedId, addFiles, removeImage, clearAll, exportJSON } = useImageStore();
+  const metadataSectionRef = useRef<HTMLDivElement>(null);
+  const hasScrolledRef = useRef(false);
+
+  useEffect(() => {
+    if (images.length > 0 && !hasScrolledRef.current && metadataSectionRef.current) {
+      hasScrolledRef.current = true;
+      setTimeout(() => {
+        metadataSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 250);
+    }
+  }, [images.length]);
 
   return (
-    <div className="min-h-screen bg-background relative pb-10">
+    <div className="min-h-screen bg-background relative pb-6">
       <div
         className="pointer-events-none fixed inset-0 z-0"
         style={{
@@ -44,8 +56,12 @@ const Index = () => {
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-center">
               <span className="gradient-text gradient-text-animated">MetaLens</span>
             </h1>
-            <p className="text-muted-foreground text-sm md:text-base mt-3 tracking-wide">
-              Image metadata explorer
+            <p className="text-sm md:text-base mt-3 tracking-wide font-medium">
+              <span style={{ color: "#18DCAB" }}>Explorer</span>
+              <span className="text-muted-foreground mx-1.5">·</span>
+              <span style={{ color: "hsl(var(--accent))" }}>Extractor</span>
+              <span className="text-muted-foreground mx-1.5">·</span>
+              <span style={{ color: "hsl(35 95% 60%)" }}>Eraser</span>
             </p>
           </motion.div>
 
@@ -54,10 +70,11 @@ const Index = () => {
 
             {images.length > 0 && (
               <motion.div
+                ref={metadataSectionRef}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="grid grid-cols-1 lg:grid-cols-5 gap-6"
+                className="grid grid-cols-1 lg:grid-cols-5 gap-6 scroll-mt-4"
               >
                 <div className="lg:col-span-3 space-y-6">
                   <div>
@@ -106,7 +123,7 @@ const Index = () => {
       </div>
 
       <footer
-        className="fixed bottom-0 inset-x-0 z-50 h-8 flex items-center justify-center text-[11px] sm:text-xs font-medium tracking-wide"
+        className="fixed bottom-0 inset-x-0 z-50 h-4 flex items-center justify-center text-[9px] sm:text-[10px] font-medium tracking-wide leading-none"
         style={{ backgroundColor: "#18DCAB", color: "#0a1f1a" }}
       >
         <a

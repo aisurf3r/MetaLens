@@ -30,7 +30,7 @@ const Index = () => {
   }, [images.length]);
 
   return (
-    <div className="min-h-screen bg-background relative pb-10">
+    <div className="min-h-screen bg-background relative pb-6">
       <div
         className="pointer-events-none fixed inset-0 z-0"
         style={{

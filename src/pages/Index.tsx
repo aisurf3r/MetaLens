@@ -6,7 +6,7 @@ import MetadataPanel from "@/components/MetadataPanel";
 import MapView from "@/components/MapView";
 import MapErrorBoundary from "@/components/MapErrorBoundary";
 import { motion } from "framer-motion";
-import { ScanSearch, Github } from "lucide-react";
+import { ScanSearch } from "lucide-react";
 
 const isValidGps = (gps: { latitude: number; longitude: number } | null | undefined) =>
   !!gps &&

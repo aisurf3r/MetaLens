@@ -27,8 +27,14 @@ export function useImageStore() {
         });
         if (allMeta) {
           metadata = allMeta;
-          if (allMeta.latitude != null && allMeta.longitude != null) {
-            gps = { latitude: allMeta.latitude, longitude: allMeta.longitude };
+          const lat = Number(allMeta.latitude);
+          const lon = Number(allMeta.longitude);
+          if (
+            Number.isFinite(lat) && Number.isFinite(lon) &&
+            lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180 &&
+            !(lat === 0 && lon === 0)
+          ) {
+            gps = { latitude: lat, longitude: lon };
           }
         }
       } catch {

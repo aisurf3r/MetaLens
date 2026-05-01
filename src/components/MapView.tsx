@@ -38,7 +38,15 @@ interface Props {
 }
 
 export default function MapView({ images, onSelect }: Props) {
-  const gpsImages = images.filter((img) => img.gps);
+  const gpsImages = images.filter((img) => {
+    const lat = img.gps?.latitude;
+    const lon = img.gps?.longitude;
+    return (
+      typeof lat === "number" && typeof lon === "number" &&
+      Number.isFinite(lat) && Number.isFinite(lon) &&
+      lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180
+    );
+  });
 
   if (gpsImages.length === 0) {
     return (

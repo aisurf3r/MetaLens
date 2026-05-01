@@ -14,13 +14,15 @@
 
 ## ✨ Features
 
-- 📁 **Multi-image upload** — Drag & drop or click to upload JPG, PNG, TIFF, and more
+- 📁 **Multi-image upload** — Drag & drop or click to upload JPG, PNG, TIFF, WebP and more
 - 🔍 **Rich metadata extraction** — View EXIF, IPTC, XMP, ICC, JFIF, and IHDR data
-- 🗺️ **Interactive map** — GPS coordinates displayed on an OpenStreetMap-powered map
-- 💾 **JSON export** — Download all extracted metadata as a structured JSON file
+- 🗺️ **Interactive map** — GPS coordinates on an OpenStreetMap map, shown only when the selected image has valid GPS data
+- 💾 **JSON export** — Per-image or full-batch metadata export
+- 🧹 **Metadata eraser** — Download a clean copy of any image with all EXIF/GPS/IPTC/XMP stripped (canvas re-encode)
+- 📱 **Mobile-safe map** — Hardened against the classic Leaflet "black screen / NaN LatLng" crash via error boundary, GPS validation and `invalidateSize` on mount
 - 🗑️ **Image management** — Remove individual images or clear all at once
-- 📱 **Responsive design** — Optimized for desktop, tablet, and mobile
-- ✨ **Modern UI** — Smooth animations, glassmorphism cards, and animated gradients
+- 🎨 **Modern UI** — Dark editorial theme, animated gradient title, marching-ants drop zone, glassmorphism cards
+- 🔗 **Minimal footer bar** — Fixed `#18DCAB` strip pinned to the bottom on every device
 
 ## 🚀 Getting Started
 
@@ -68,28 +70,31 @@ The app will be available at `http://localhost:5173`.
 2. **Select an image** — Click a thumbnail in the gallery to view its metadata
 3. **Explore metadata** — The right panel shows all extracted EXIF, IPTC, XMP, and other data
 4. **View locations** — Images with GPS data appear as markers on the interactive map
-5. **Export data** — Click the export button to download all metadata as JSON
+5. **Export data** — Use "Export metadata" in the metadata panel to download a JSON for the selected image, or the global export action for the full batch
+6. **Erase metadata** — Click "Erase metadata" to download a clean copy of the image with all EXIF/GPS/IPTC/XMP removed
 
 ## 📁 Project Structure
 
 ```
 src/
-├── components/       # UI components
-│   ├── ui/           # shadcn/ui base components
-│   ├── AppHeader.tsx  # Top navigation bar
-│   ├── ImageGallery.tsx # Thumbnail grid
-│   ├── MapView.tsx    # Leaflet map component
-│   ├── MetadataPanel.tsx # Metadata display panel
-│   └── UploadZone.tsx # Drag & drop upload area
+├── components/             # UI components
+│   ├── ui/                 # shadcn/ui base components
+│   ├── AppHeader.tsx       # Top navigation bar
+│   ├── ImageGallery.tsx    # Thumbnail grid
+│   ├── MapView.tsx         # Leaflet map (validates GPS, invalidateSize on mount)
+│   ├── MapErrorBoundary.tsx# Catches Leaflet runtime errors so the app never blanks
+│   ├── MetadataPanel.tsx   # Metadata display + Export / Erase actions
+│   └── UploadZone.tsx      # Drag & drop upload area
 ├── hooks/
-│   └── useImageStore.ts # Image state management
+│   └── useImageStore.ts    # Image state, EXIF parsing, GPS validation, JSON export
+├── lib/
+│   └── imageMeta.ts        # Per-image JSON export + canvas-based metadata eraser
 ├── pages/
-│   └── Index.tsx      # Main page
+│   └── Index.tsx           # Main page (conditional map, fixed footer bar)
 ├── types/
-│   └── image.ts       # TypeScript interfaces
-└── index.css          # Design tokens & global styles
+│   └── image.ts            # TypeScript interfaces
+└── index.css               # Design tokens & global styles
 ```
-TODO: fix mobile map loading. (fucking nightmare)
 
 ## 📄 License
 

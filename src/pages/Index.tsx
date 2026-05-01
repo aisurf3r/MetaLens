@@ -6,13 +6,19 @@ import MetadataPanel from "@/components/MetadataPanel";
 import MapView from "@/components/MapView";
 import MapErrorBoundary from "@/components/MapErrorBoundary";
 import { motion } from "framer-motion";
-import { ScanSearch, Github } from "lucide-react";
+import { ScanSearch } from "lucide-react";
+
+const isValidGps = (gps: { latitude: number; longitude: number } | null | undefined) =>
+  !!gps &&
+  Number.isFinite(gps.latitude) && Number.isFinite(gps.longitude) &&
+  gps.latitude >= -90 && gps.latitude <= 90 &&
+  gps.longitude >= -180 && gps.longitude <= 180;
 
 const Index = () => {
   const { images, selected, selectedId, setSelectedId, addFiles, removeImage, clearAll, exportJSON } = useImageStore();
 
   return (
-    <div className="min-h-screen bg-background relative">
+    <div className="min-h-screen bg-background relative pb-10">
       <div
         className="pointer-events-none fixed inset-0 z-0"
         style={{
@@ -67,7 +73,7 @@ const Index = () => {
                     />
                   </div>
 
-                  {selected?.gps && (
+                  {isValidGps(selected?.gps) && (
                     <div>
                       <h2 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
                         <span className="w-1.5 h-1.5 rounded-full bg-accent" />
@@ -99,20 +105,19 @@ const Index = () => {
         </div>
       </div>
 
-      <footer className="relative z-10 mt-12 border-t border-border/40 py-5 flex flex-col items-center justify-center gap-2">
+      <footer
+        className="fixed bottom-0 inset-x-0 z-50 h-8 flex items-center justify-center text-[11px] sm:text-xs font-medium tracking-wide"
+        style={{ backgroundColor: "#18DCAB", color: "#0a1f1a" }}
+      >
         <a
           href="https://github.com/aisurf3r/MetaLens"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="GitHub repository"
-          className="transition-transform hover:scale-110"
-          style={{ color: "#18DCAB" }}
+          className="hover:underline font-semibold"
         >
-          <Github className="w-5 h-5" />
+          MetaLens
         </a>
-        <p className="text-xs tracking-wide" style={{ color: "#18DCAB" }}>
-          MetaLens — Image Metadata Explorer · Extractor · Eraser
-        </p>
+        <span className="mx-1">— Image Metadata Explorer · Extractor · Eraser</span>
       </footer>
     </div>
   );

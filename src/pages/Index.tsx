@@ -73,7 +73,7 @@ const Index = () => {
                     />
                   </div>
 
-                  {selected?.gps && (
+                  {isValidGps(selected?.gps) && (
                     <div>
                       <h2 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
                         <span className="w-1.5 h-1.5 rounded-full bg-accent" />

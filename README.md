@@ -70,7 +70,8 @@ The app will be available at `http://localhost:5173`.
 2. **Select an image** — Click a thumbnail in the gallery to view its metadata
 3. **Explore metadata** — The right panel shows all extracted EXIF, IPTC, XMP, and other data
 4. **View locations** — Images with GPS data appear as markers on the interactive map
-5. **Export data** — Click the export button to download all metadata as JSON
+5. **Export data** — Use "Export metadata" in the metadata panel to download a JSON for the selected image, or the global export action for the full batch
+6. **Erase metadata** — Click "Erase metadata" to download a clean copy of the image with all EXIF/GPS/IPTC/XMP removed
 
 ## 📁 Project Structure
 

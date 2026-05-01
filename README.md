@@ -77,22 +77,24 @@ The app will be available at `http://localhost:5173`.
 
 ```
 src/
-├── components/       # UI components
-│   ├── ui/           # shadcn/ui base components
-│   ├── AppHeader.tsx  # Top navigation bar
-│   ├── ImageGallery.tsx # Thumbnail grid
-│   ├── MapView.tsx    # Leaflet map component
-│   ├── MetadataPanel.tsx # Metadata display panel
-│   └── UploadZone.tsx # Drag & drop upload area
+├── components/             # UI components
+│   ├── ui/                 # shadcn/ui base components
+│   ├── AppHeader.tsx       # Top navigation bar
+│   ├── ImageGallery.tsx    # Thumbnail grid
+│   ├── MapView.tsx         # Leaflet map (validates GPS, invalidateSize on mount)
+│   ├── MapErrorBoundary.tsx# Catches Leaflet runtime errors so the app never blanks
+│   ├── MetadataPanel.tsx   # Metadata display + Export / Erase actions
+│   └── UploadZone.tsx      # Drag & drop upload area
 ├── hooks/
-│   └── useImageStore.ts # Image state management
+│   └── useImageStore.ts    # Image state, EXIF parsing, GPS validation, JSON export
+├── lib/
+│   └── imageMeta.ts        # Per-image JSON export + canvas-based metadata eraser
 ├── pages/
-│   └── Index.tsx      # Main page
+│   └── Index.tsx           # Main page (conditional map, fixed footer bar)
 ├── types/
-│   └── image.ts       # TypeScript interfaces
-└── index.css          # Design tokens & global styles
+│   └── image.ts            # TypeScript interfaces
+└── index.css               # Design tokens & global styles
 ```
-TODO: fix mobile map loading. (fucking nightmare)
 
 ## 📄 License
 

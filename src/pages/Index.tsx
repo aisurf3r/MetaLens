@@ -4,8 +4,9 @@ import UploadZone from "@/components/UploadZone";
 import ImageGallery from "@/components/ImageGallery";
 import MetadataPanel from "@/components/MetadataPanel";
 import MapView from "@/components/MapView";
+import MapErrorBoundary from "@/components/MapErrorBoundary";
 import { motion } from "framer-motion";
-import { ScanSearch } from "lucide-react";
+import { ScanSearch, Github } from "lucide-react";
 
 const Index = () => {
   const { images, selected, selectedId, setSelectedId, addFiles, removeImage, clearAll, exportJSON } = useImageStore();
@@ -42,7 +43,7 @@ const Index = () => {
             </p>
           </motion.div>
 
-          <div className="space-y-6 pb-28">
+          <div className="space-y-6 pb-10">
             <UploadZone onFiles={addFiles} />
 
             {images.length > 0 && (
@@ -72,7 +73,13 @@ const Index = () => {
                         <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                         Location Map
                       </h2>
-                      <MapView images={images.filter(i => i.gps)} onSelect={setSelectedId} />
+                      <MapErrorBoundary>
+                        <MapView
+                          key={selected.id}
+                          images={images.filter(i => i.gps)}
+                          onSelect={setSelectedId}
+                        />
+                      </MapErrorBoundary>
                     </div>
                   )}
                 </div>
@@ -91,6 +98,22 @@ const Index = () => {
           </div>
         </div>
       </div>
+
+      <footer className="relative z-10 mt-12 border-t border-border/40 py-5 flex flex-col items-center justify-center gap-2">
+        <a
+          href="https://github.com/aisurf3r/MetaLens"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub repository"
+          className="transition-transform hover:scale-110"
+          style={{ color: "#18DCAB" }}
+        >
+          <Github className="w-5 h-5" />
+        </a>
+        <p className="text-xs tracking-wide" style={{ color: "#18DCAB" }}>
+          MetaLens — Image Metadata Explorer · Extractor · Eraser
+        </p>
+      </footer>
     </div>
   );
 };

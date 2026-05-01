@@ -1,7 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ImageFile } from "@/types/image";
-import { Info, Camera, Aperture, Timer, Ruler, MapPin, Calendar, FileText, Tag } from "lucide-react";
+import { Info, Camera, MapPin, FileText, Tag, Download, Eraser } from "lucide-react";
 import { useState } from "react";
+import { exportImageMetadata, downloadCleanCopy } from "@/lib/imageMeta";
+import { toast } from "sonner";
 
 interface Props {
   image: ImageFile | null;
@@ -137,6 +139,31 @@ export default function MetadataPanel({ image }: Props) {
             {s.label}
           </button>
         ))}
+      </div>
+
+      {/* Action buttons */}
+      <div className="flex gap-2 px-4 pt-3">
+        <button
+          onClick={() => exportImageMetadata(image)}
+          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors"
+        >
+          <Download className="w-3.5 h-3.5" />
+          Export metadata
+        </button>
+        <button
+          onClick={async () => {
+            try {
+              await downloadCleanCopy(image);
+              toast.success("Clean copy downloaded");
+            } catch (e) {
+              toast.error("Could not strip metadata");
+            }
+          }}
+          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-accent/10 text-accent text-xs font-medium hover:bg-accent/20 transition-colors"
+        >
+          <Eraser className="w-3.5 h-3.5" />
+          Erase metadata
+        </button>
       </div>
 
       {/* Content */}

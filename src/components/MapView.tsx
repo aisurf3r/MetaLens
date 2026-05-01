@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -17,12 +17,17 @@ L.Icon.Default.mergeOptions({
 function FitBounds({ positions }: { positions: [number, number][] }) {
   const map = useMap();
   useEffect(() => {
-    if (positions.length === 0) return;
-    if (positions.length === 1) {
-      map.setView(positions[0], 13);
-    } else {
-      map.fitBounds(positions, { padding: [40, 40] });
-    }
+    // Ensure tiles render correctly after mount/resize (critical on mobile)
+    const t = setTimeout(() => {
+      try { map.invalidateSize(); } catch {}
+      if (positions.length === 0) return;
+      if (positions.length === 1) {
+        map.setView(positions[0], 13);
+      } else {
+        map.fitBounds(positions, { padding: [40, 40] });
+      }
+    }, 100);
+    return () => clearTimeout(t);
   }, [positions, map]);
   return null;
 }

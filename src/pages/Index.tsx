@@ -8,6 +8,12 @@ import MapErrorBoundary from "@/components/MapErrorBoundary";
 import { motion } from "framer-motion";
 import { ScanSearch, Github } from "lucide-react";
 
+const isValidGps = (gps: { latitude: number; longitude: number } | null | undefined) =>
+  !!gps &&
+  Number.isFinite(gps.latitude) && Number.isFinite(gps.longitude) &&
+  gps.latitude >= -90 && gps.latitude <= 90 &&
+  gps.longitude >= -180 && gps.longitude <= 180;
+
 const Index = () => {
   const { images, selected, selectedId, setSelectedId, addFiles, removeImage, clearAll, exportJSON } = useImageStore();
 

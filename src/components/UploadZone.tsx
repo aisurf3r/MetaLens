@@ -46,11 +46,17 @@ export default function UploadZone({ onFiles }: UploadZoneProps) {
         <p className="text-foreground font-medium">Drop images here or tap to browse</p>
         <p className="text-muted-foreground text-sm mt-1">JPG, PNG, TIFF, WebP — multiple files supported</p>
       </div>
+      {/*
+        Important for Android: do NOT set the `capture` attribute and keep `accept`
+        broad so the system file picker offers "Files / Documents" alongside Gallery.
+        Selecting via Files preserves the original EXIF/GPS data, which gallery
+        pickers (Samsung/Xiaomi/MIUI) often strip during re-encoding.
+      */}
       <input
         ref={inputRef}
         type="file"
         multiple
-        accept="image/*"
+        accept="image/*,.jpg,.jpeg,.png,.tiff,.tif,.webp,.heic,.heif"
         className="hidden"
         onChange={(e) => e.target.files && onFiles(e.target.files)}
       />

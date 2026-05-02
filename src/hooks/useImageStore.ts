@@ -216,32 +216,28 @@ export function useImageStore() {
         metadata = null;
       }
 
-      // Dedicated GPS parser — most reliable path on mobile browsers.
-      const tryAssignGps = (lat: any, lon: any) => {
-        const la = Number(lat);
-        const lo = Number(lon);
-        if (
-          Number.isFinite(la) && Number.isFinite(lo) &&
-          la >= -90 && la <= 90 && lo >= -180 && lo <= 180 &&
-          !(la === 0 && lo === 0)
-        ) {
-          gps = { latitude: la, longitude: lo };
-          return true;
-        }
-        return false;
-      };
-
       try {
         const gpsOnly = await exifr.gps(source);
-        if (gpsOnly) tryAssignGps(gpsOnly.latitude, gpsOnly.longitude);
+        if (gpsOnly) gps = buildGpsPoint(gpsOnly.latitude, gpsOnly.longitude);
       } catch {}
 
       // Fallback to merged metadata if dedicated parser missed it.
       if (!gps && metadata) {
-        tryAssignGps(metadata.latitude, metadata.longitude);
-        if (!gps && metadata.GPSLatitude != null && metadata.GPSLongitude != null) {
-          tryAssignGps(metadata.GPSLatitude, metadata.GPSLongitude);
-        }
+        gps = findNestedGps(metadata);
+      }
+
+      // Last-resort browser-independent parsers for mobile uploads where exifr misses GPS.
+      if (!gps && buffer) {
+        try { gps = parseJpegExifGps(buffer) ?? parseXmpGps(buffer); } catch {}
+      }
+
+      if (!gps && import.meta.env.DEV) {
+        console.info("MetaLens: GPS not found", {
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          metadataKeys: metadata ? Object.keys(metadata).slice(0, 80) : [],
+        });
       }
 
       newImages.push({ id, file, url, name: file.name, size: file.size, metadata, gps });

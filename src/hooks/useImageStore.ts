@@ -1,6 +1,33 @@
 import { useState, useCallback } from "react";
 import exifr from "exifr";
 import { ImageFile } from "@/types/image";
+import { toast } from "@/hooks/use-toast";
+
+const isAndroid = () =>
+  typeof navigator !== "undefined" && /android/i.test(navigator.userAgent);
+
+// Read the raw File into an ArrayBuffer. Tries the modern API first and
+// falls back to FileReader, which is more reliable inside Android WebViews
+// and some older mobile browsers.
+const readArrayBuffer = (file: File): Promise<ArrayBuffer | null> =>
+  new Promise((resolve) => {
+    if (typeof file.arrayBuffer === "function") {
+      file.arrayBuffer().then(
+        (buf) => resolve(buf),
+        () => {
+          const reader = new FileReader();
+          reader.onload = () => resolve((reader.result as ArrayBuffer) ?? null);
+          reader.onerror = () => resolve(null);
+          reader.readAsArrayBuffer(file);
+        }
+      );
+    } else {
+      const reader = new FileReader();
+      reader.onload = () => resolve((reader.result as ArrayBuffer) ?? null);
+      reader.onerror = () => resolve(null);
+      reader.readAsArrayBuffer(file);
+    }
+  });
 
 export function useImageStore() {
   const [images, setImages] = useState<ImageFile[]>([]);
@@ -9,6 +36,8 @@ export function useImageStore() {
   const addFiles = useCallback(async (files: FileList | File[]) => {
     const fileArray = Array.from(files);
     const newImages: ImageFile[] = [];
+    let anyGpsFound = false;
+    let anyMetadataFound = false;
 
     for (const file of fileArray) {
       if (!file.type.startsWith("image/")) continue;
@@ -19,15 +48,9 @@ export function useImageStore() {
       let metadata: Record<string, any> | null = null;
       let gps: { latitude: number; longitude: number } | null = null;
 
-      // Read into ArrayBuffer first — far more reliable on mobile (iOS Safari/Chrome)
-      // where passing the File object directly to exifr can fail silently for GPS.
-      let buffer: ArrayBuffer | null = null;
-      try {
-        buffer = await file.arrayBuffer();
-      } catch {
-        buffer = null;
-      }
-
+      // ALWAYS read the raw File bytes first — before any canvas/base64 work —
+      // so EXIF segments survive on mobile browsers (especially Android WebView).
+      const buffer = await readArrayBuffer(file);
       const source: ArrayBuffer | File = buffer ?? file;
 
       try {
@@ -42,7 +65,6 @@ export function useImageStore() {
         metadata = null;
       }
 
-      // Dedicated GPS parser — most reliable path on mobile browsers.
       const tryAssignGps = (lat: any, lon: any) => {
         const la = Number(lat);
         const lo = Number(lon);
@@ -62,7 +84,6 @@ export function useImageStore() {
         if (gpsOnly) tryAssignGps(gpsOnly.latitude, gpsOnly.longitude);
       } catch {}
 
-      // Fallback to merged metadata if dedicated parser missed it.
       if (!gps && metadata) {
         tryAssignGps(metadata.latitude, metadata.longitude);
         if (!gps && metadata.GPSLatitude != null && metadata.GPSLongitude != null) {
@@ -70,12 +91,25 @@ export function useImageStore() {
         }
       }
 
+      if (gps) anyGpsFound = true;
+      if (metadata && Object.keys(metadata).length > 0) anyMetadataFound = true;
+
       newImages.push({ id, file, url, name: file.name, size: file.size, metadata, gps });
     }
 
     setImages((prev) => [...prev, ...newImages]);
     if (newImages.length > 0 && !selectedId) {
       setSelectedId(newImages[0].id);
+    }
+
+    // Android UX hint: gallery pickers (Samsung/Xiaomi/MIUI) often strip EXIF.
+    if (newImages.length > 0 && !anyGpsFound && isAndroid()) {
+      toast({
+        title: anyMetadataFound ? "No GPS data found" : "No metadata found",
+        description:
+          "Tip: On Android, pick your images using 'Files' or 'Documents' instead of 'Gallery' to preserve location data.",
+        duration: 7000,
+      });
     }
   }, [selectedId]);
 

@@ -4,12 +4,15 @@ import { ImageFile } from "@/types/image";
 
 type GpsPoint = { latitude: number; longitude: number };
 
-const isValidGpsPoint = (lat: number, lon: number): lat is number =>
+const isValidGpsPoint = (lat: number, lon: number): boolean =>
   Number.isFinite(lat) && Number.isFinite(lon) &&
   lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180 &&
   !(lat === 0 && lon === 0);
 
-const rationalToNumber = (value: any): number | null => {
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+const rationalToNumber = (value: unknown): number | null => {
   if (typeof value === "number") return Number.isFinite(value) ? value : null;
   if (typeof value === "string") {
     const fraction = value.trim().match(/^(-?\d+(?:\.\d+)?)\s*\/\s*(-?\d+(?:\.\d+)?)$/);
@@ -26,7 +29,7 @@ const rationalToNumber = (value: any): number | null => {
     const denominator = rationalToNumber(value[1]);
     return numerator !== null && denominator ? numerator / denominator : null;
   }
-  if (value && typeof value === "object") {
+  if (isRecord(value)) {
     const numerator = value.numerator ?? value.num ?? value.n;
     const denominator = value.denominator ?? value.den ?? value.d;
     if (numerator != null && denominator != null) {
@@ -38,7 +41,7 @@ const rationalToNumber = (value: any): number | null => {
   return null;
 };
 
-const dmsToDecimal = (value: any, ref?: any): number | null => {
+const dmsToDecimal = (value: unknown, ref?: unknown): number | null => {
   const direction = String(ref ?? "").trim().toUpperCase();
   let sign = direction === "S" || direction === "W" ? -1 : 1;
 
@@ -67,7 +70,7 @@ const dmsToDecimal = (value: any, ref?: any): number | null => {
   return rationalToNumber(value);
 };
 
-const buildGpsPoint = (latValue: any, lonValue: any, latRef?: any, lonRef?: any): GpsPoint | null => {
+const buildGpsPoint = (latValue: unknown, lonValue: unknown, latRef?: unknown, lonRef?: unknown): GpsPoint | null => {
   const latitude = dmsToDecimal(latValue, latRef);
   const longitude = dmsToDecimal(lonValue, lonRef);
   return latitude !== null && longitude !== null && isValidGpsPoint(latitude, longitude)
@@ -75,10 +78,10 @@ const buildGpsPoint = (latValue: any, lonValue: any, latRef?: any, lonRef?: any)
     : null;
 };
 
-const findNestedGps = (data: any): GpsPoint | null => {
+const findNestedGps = (data: unknown): GpsPoint | null => {
   const seen = new WeakSet<object>();
-  const visit = (node: any): GpsPoint | null => {
-    if (!node || typeof node !== "object") return null;
+  const visit = (node: unknown): GpsPoint | null => {
+    if (!isRecord(node)) return null;
     if (seen.has(node)) return null;
     seen.add(node);
 

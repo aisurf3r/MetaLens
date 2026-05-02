@@ -19,26 +19,55 @@ export function useImageStore() {
       let metadata: Record<string, any> | null = null;
       let gps: { latitude: number; longitude: number } | null = null;
 
+      // Read into ArrayBuffer first — far more reliable on mobile (iOS Safari/Chrome)
+      // where passing the File object directly to exifr can fail silently for GPS.
+      let buffer: ArrayBuffer | null = null;
       try {
-        const allMeta = await exifr.parse(file, { 
+        buffer = await file.arrayBuffer();
+      } catch {
+        buffer = null;
+      }
+
+      const source: ArrayBuffer | File = buffer ?? file;
+
+      try {
+        const allMeta = await exifr.parse(source, {
           tiff: true, exif: true, gps: true, iptc: true, xmp: true,
           icc: true, jfif: true, ihdr: true,
           translateKeys: true, translateValues: true, reviveValues: true,
+          mergeOutput: true,
         });
-        if (allMeta) {
-          metadata = allMeta;
-          const lat = Number(allMeta.latitude);
-          const lon = Number(allMeta.longitude);
-          if (
-            Number.isFinite(lat) && Number.isFinite(lon) &&
-            lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180 &&
-            !(lat === 0 && lon === 0)
-          ) {
-            gps = { latitude: lat, longitude: lon };
-          }
-        }
+        if (allMeta) metadata = allMeta;
       } catch {
         metadata = null;
+      }
+
+      // Dedicated GPS parser — most reliable path on mobile browsers.
+      const tryAssignGps = (lat: any, lon: any) => {
+        const la = Number(lat);
+        const lo = Number(lon);
+        if (
+          Number.isFinite(la) && Number.isFinite(lo) &&
+          la >= -90 && la <= 90 && lo >= -180 && lo <= 180 &&
+          !(la === 0 && lo === 0)
+        ) {
+          gps = { latitude: la, longitude: lo };
+          return true;
+        }
+        return false;
+      };
+
+      try {
+        const gpsOnly = await exifr.gps(source);
+        if (gpsOnly) tryAssignGps(gpsOnly.latitude, gpsOnly.longitude);
+      } catch {}
+
+      // Fallback to merged metadata if dedicated parser missed it.
+      if (!gps && metadata) {
+        tryAssignGps(metadata.latitude, metadata.longitude);
+        if (!gps && metadata.GPSLatitude != null && metadata.GPSLongitude != null) {
+          tryAssignGps(metadata.GPSLatitude, metadata.GPSLongitude);
+        }
       }
 
       newImages.push({ id, file, url, name: file.name, size: file.size, metadata, gps });

@@ -152,7 +152,7 @@ const parseJpegExifGps = (buffer: ArrayBuffer): GpsPoint | null => {
         const readIfd = (ifdOffset: number) => {
           const start = tiff + ifdOffset;
           const count = readU16(start);
-          const tags: Record<number, any> = {};
+          const tags: Record<number, unknown> = {};
           for (let i = 0; i < count; i += 1) {
             const entry = start + 2 + i * 12;
             tags[readU16(entry)] = readValue(entry);
@@ -193,7 +193,7 @@ export function useImageStore() {
       const id = crypto.randomUUID();
       const url = URL.createObjectURL(file);
 
-      let metadata: Record<string, any> | null = null;
+      let metadata: Record<string, unknown> | null = null;
       let gps: { latitude: number; longitude: number } | null = null;
 
       // Read into ArrayBuffer first — far more reliable on mobile (iOS Safari/Chrome)
@@ -222,7 +222,9 @@ export function useImageStore() {
       try {
         const gpsOnly = await exifr.gps(source);
         if (gpsOnly) gps = buildGpsPoint(gpsOnly.latitude, gpsOnly.longitude);
-      } catch {}
+      } catch {
+        // Continue with metadata/manual fallbacks below.
+      }
 
       // Fallback to merged metadata if dedicated parser missed it.
       if (!gps && metadata) {
@@ -231,7 +233,11 @@ export function useImageStore() {
 
       // Last-resort browser-independent parsers for mobile uploads where exifr misses GPS.
       if (!gps && buffer) {
-        try { gps = parseJpegExifGps(buffer) ?? parseXmpGps(buffer); } catch {}
+        try {
+          gps = parseJpegExifGps(buffer) ?? parseXmpGps(buffer);
+        } catch {
+          // Keep the image loaded even if GPS parsing fails.
+        }
       }
 
       if (!gps && import.meta.env.DEV) {

@@ -88,7 +88,7 @@ export function useImageStore() {
       // Strategy 1: full parse forcing whole-file read (no chunk window).
       try {
         const allMeta = await exifr.parse(source, {
-          tiff: true, ifd0: true, exif: true, gps: true,
+          tiff: true, exif: true, gps: true,
           iptc: true, xmp: true, icc: true, jfif: true, ihdr: true,
           translateKeys: true, translateValues: true, reviveValues: true,
           mergeOutput: true,

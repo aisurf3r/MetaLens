@@ -105,7 +105,7 @@ export default function MapView({ images, onSelect }: Props) {
                 </div>
               </div>
             </Popup>
-          </Marker>
+          </ZoomMarker>
         ))}
       </MapContainer>
     </motion.div>

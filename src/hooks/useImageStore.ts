@@ -95,7 +95,7 @@ export function useImageStore() {
           chunked: false,
           firstChunkSize: file.size || undefined,
           chunkSize: file.size || undefined,
-        });
+        } as any);
         if (allMeta) metadata = allMeta;
       } catch {
         metadata = null;

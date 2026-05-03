@@ -32,6 +32,23 @@ function FitBounds({ positions }: { positions: [number, number][] }) {
   return null;
 }
 
+function ZoomMarker({ img, onSelect, children }: { img: ImageFile; onSelect: (id: string) => void; children: React.ReactNode }) {
+  const map = useMap();
+  return (
+    <Marker
+      position={[img.gps!.latitude, img.gps!.longitude]}
+      eventHandlers={{
+        click: () => {
+          onSelect(img.id);
+          map.flyTo([img.gps!.latitude, img.gps!.longitude], 16, { duration: 0.8 });
+        },
+      }}
+    >
+      {children}
+    </Marker>
+  );
+}
+
 interface Props {
   images: ImageFile[];
   onSelect: (id: string) => void;

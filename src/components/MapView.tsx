@@ -124,6 +124,7 @@ export default function MapView({ images, selectedId, onSelect }: Props) {
           <ZoomMarker
             key={img.id}
             img={img}
+            isSelected={img.id === selectedId}
             onSelect={onSelect}
           >
             <Popup>

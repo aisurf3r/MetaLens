@@ -6,9 +6,6 @@ import { toast } from "@/hooks/use-toast";
 const isAndroid = () =>
   typeof navigator !== "undefined" && /android/i.test(navigator.userAgent);
 
-// Read the raw File into an ArrayBuffer. Tries the modern API first and
-// falls back to FileReader, which is more reliable inside Android WebViews
-// and some older mobile browsers.
 const readArrayBuffer = (file: File): Promise<ArrayBuffer | null> =>
   new Promise((resolve) => {
     if (typeof file.arrayBuffer === "function") {
@@ -29,6 +26,31 @@ const readArrayBuffer = (file: File): Promise<ArrayBuffer | null> =>
     }
   });
 
+// Convert a DMS array [deg, min, sec] (or single decimal) to a decimal degree.
+const dmsToDecimal = (dms: any, ref?: any): number | null => {
+  let value: number | null = null;
+  if (typeof dms === "number" && Number.isFinite(dms)) {
+    value = dms;
+  } else if (Array.isArray(dms) && dms.length >= 1) {
+    const d = Number(dms[0]) || 0;
+    const m = Number(dms[1] ?? 0) || 0;
+    const s = Number(dms[2] ?? 0) || 0;
+    value = d + m / 60 + s / 3600;
+  }
+  if (value == null || !Number.isFinite(value)) return null;
+  if (typeof ref === "string") {
+    const r = ref.trim().toUpperCase();
+    if (r === "S" || r === "W") value = -Math.abs(value);
+    else value = Math.abs(value);
+  }
+  return value;
+};
+
+const isValidLatLon = (la: number, lo: number) =>
+  Number.isFinite(la) && Number.isFinite(lo) &&
+  la >= -90 && la <= 90 && lo >= -180 && lo <= 180 &&
+  !(la === 0 && lo === 0);
+
 export function useImageStore() {
   const [images, setImages] = useState<ImageFile[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -38,6 +60,7 @@ export function useImageStore() {
     const newImages: ImageFile[] = [];
     let anyGpsFound = false;
     let anyMetadataFound = false;
+    const android = isAndroid();
 
     for (const file of fileArray) {
       if (!file.type.startsWith("image/")) continue;
@@ -47,19 +70,32 @@ export function useImageStore() {
 
       let metadata: Record<string, any> | null = null;
       let gps: { latitude: number; longitude: number } | null = null;
+      let strategy = "none";
 
-      // ALWAYS read the raw File bytes first — before any canvas/base64 work —
-      // so EXIF segments survive on mobile browsers (especially Android WebView).
       const buffer = await readArrayBuffer(file);
       const source: ArrayBuffer | File = buffer ?? file;
 
+      if (android) {
+        // eslint-disable-next-line no-console
+        console.log("[MetaLens][android] file", {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          buffer: buffer ? buffer.byteLength : null,
+        });
+      }
+
+      // Strategy 1: full parse forcing whole-file read (no chunk window).
       try {
         const allMeta = await exifr.parse(source, {
-          tiff: true, exif: true, gps: true, iptc: true, xmp: true,
-          icc: true, jfif: true, ihdr: true,
+          tiff: true, exif: true, gps: true,
+          iptc: true, xmp: true, icc: true, jfif: true, ihdr: true,
           translateKeys: true, translateValues: true, reviveValues: true,
           mergeOutput: true,
-        });
+          chunked: false,
+          firstChunkSize: file.size || undefined,
+          chunkSize: file.size || undefined,
+        } as any);
         if (allMeta) metadata = allMeta;
       } catch {
         metadata = null;
@@ -68,31 +104,54 @@ export function useImageStore() {
       const tryAssignGps = (lat: any, lon: any) => {
         const la = Number(lat);
         const lo = Number(lon);
-        if (
-          Number.isFinite(la) && Number.isFinite(lo) &&
-          la >= -90 && la <= 90 && lo >= -180 && lo <= 180 &&
-          !(la === 0 && lo === 0)
-        ) {
+        if (isValidLatLon(la, lo)) {
           gps = { latitude: la, longitude: lo };
           return true;
         }
         return false;
       };
 
-      try {
-        const gpsOnly = await exifr.gps(source);
-        if (gpsOnly) tryAssignGps(gpsOnly.latitude, gpsOnly.longitude);
-      } catch {}
-
-      if (!gps && metadata) {
-        tryAssignGps(metadata.latitude, metadata.longitude);
-        if (!gps && metadata.GPSLatitude != null && metadata.GPSLongitude != null) {
-          tryAssignGps(metadata.GPSLatitude, metadata.GPSLongitude);
-        }
+      // Strategy 2: decimal lat/lon already merged by exifr.
+      if (metadata) {
+        if (tryAssignGps(metadata.latitude, metadata.longitude)) strategy = "exifr-decimal";
       }
 
-      if (gps) anyGpsFound = true;
+      // Strategy 3: raw GPSLatitude/GPSLongitude with refs (DMS arrays or numbers).
+      if (!gps && metadata) {
+        const latRaw = metadata.GPSLatitude ?? metadata.gps?.GPSLatitude;
+        const lonRaw = metadata.GPSLongitude ?? metadata.gps?.GPSLongitude;
+        const latRef = metadata.GPSLatitudeRef ?? metadata.gps?.GPSLatitudeRef;
+        const lonRef = metadata.GPSLongitudeRef ?? metadata.gps?.GPSLongitudeRef;
+        const la = dmsToDecimal(latRaw, latRef);
+        const lo = dmsToDecimal(lonRaw, lonRef);
+        if (la != null && lo != null && tryAssignGps(la, lo)) strategy = "raw-dms";
+      }
+
+      // Strategy 4: dedicated exifr.gps() as a last resort.
+      if (!gps) {
+        try {
+          const gpsOnly = await exifr.gps(source);
+          if (gpsOnly && tryAssignGps(gpsOnly.latitude, gpsOnly.longitude)) {
+            strategy = "exifr-gps";
+          }
+        } catch {}
+      }
+
+      if (gps) {
+        anyGpsFound = true;
+        if (strategy === "none") strategy = "exifr-decimal";
+      }
       if (metadata && Object.keys(metadata).length > 0) anyMetadataFound = true;
+
+      if (android) {
+        // eslint-disable-next-line no-console
+        console.log("[MetaLens][android] parsed", {
+          name: file.name,
+          metadataKeys: metadata ? Object.keys(metadata).length : 0,
+          gps,
+          strategy,
+        });
+      }
 
       newImages.push({ id, file, url, name: file.name, size: file.size, metadata, gps });
     }
@@ -102,13 +161,12 @@ export function useImageStore() {
       setSelectedId(newImages[0].id);
     }
 
-    // Android UX hint: gallery pickers (Samsung/Xiaomi/MIUI) often strip EXIF.
-    if (newImages.length > 0 && !anyGpsFound && isAndroid()) {
+    if (newImages.length > 0 && !anyGpsFound && android) {
       toast({
-        title: anyMetadataFound ? "No GPS data found" : "No metadata found",
+        title: anyMetadataFound ? "No GPS data could be read" : "No metadata could be read",
         description:
-          "Tip: On Android, pick your images using 'Files' or 'Documents' instead of 'Gallery' to preserve location data.",
-        duration: 7000,
+          "On Android, please pick the image from 'Files' or 'Documents' (not 'Gallery'). If it still fails, this browser may not expose GPS bytes for that file.",
+        duration: 8000,
       });
     }
   }, [selectedId]);

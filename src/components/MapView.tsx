@@ -32,11 +32,25 @@ function FitBounds({ positions }: { positions: [number, number][] }) {
   return null;
 }
 
-function ZoomMarker({ img, onSelect, children }: { img: ImageFile; onSelect: (id: string) => void; children: React.ReactNode }) {
+const greenIcon = new L.Icon({
+  iconUrl:
+    "data:image/svg+xml;base64," +
+    btoa(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="25" height="41" viewBox="0 0 25 41"><path d="M12.5 0C5.6 0 0 5.6 0 12.5C0 21.9 12.5 41 12.5 41S25 21.9 25 12.5C25 5.6 19.4 0 12.5 0Z" fill="#18DCAB" stroke="#0a1f1a" stroke-width="1.5"/><circle cx="12.5" cy="12.5" r="4.5" fill="#0a1f1a"/></svg>`
+    ),
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+  shadowSize: [41, 41],
+});
+
+function ZoomMarker({ img, onSelect, isSelected, children }: { img: ImageFile; onSelect: (id: string) => void; isSelected: boolean; children: React.ReactNode }) {
   const map = useMap();
   return (
     <Marker
       position={[img.gps!.latitude, img.gps!.longitude]}
+      icon={isSelected ? greenIcon : new L.Icon.Default()}
       eventHandlers={{
         click: () => {
           onSelect(img.id);

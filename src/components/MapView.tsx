@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap, LayersControl } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { ImageFile } from "@/types/image";
@@ -30,6 +30,23 @@ function FitBounds({ positions }: { positions: [number, number][] }) {
     return () => clearTimeout(t);
   }, [positions, map]);
   return null;
+}
+
+function ZoomMarker({ img, onSelect, children }: { img: ImageFile; onSelect: (id: string) => void; children: React.ReactNode }) {
+  const map = useMap();
+  return (
+    <Marker
+      position={[img.gps!.latitude, img.gps!.longitude]}
+      eventHandlers={{
+        click: () => {
+          onSelect(img.id);
+          map.flyTo([img.gps!.latitude, img.gps!.longitude], 16, { duration: 0.8 });
+        },
+      }}
+    >
+      {children}
+    </Marker>
+  );
 }
 
 interface Props {
@@ -72,16 +89,27 @@ export default function MapView({ images, onSelect }: Props) {
         className="w-full h-[300px] md:h-[400px]"
         scrollWheelZoom
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        <LayersControl position="topright">
+          <LayersControl.BaseLayer checked name="Street">
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+          </LayersControl.BaseLayer>
+          <LayersControl.BaseLayer name="Satellite">
+            <TileLayer
+              attribution='Tiles &copy; Esri'
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+              maxZoom={19}
+            />
+          </LayersControl.BaseLayer>
+        </LayersControl>
         <FitBounds positions={positions} />
         {gpsImages.map((img) => (
-          <Marker
+          <ZoomMarker
             key={img.id}
-            position={[img.gps!.latitude, img.gps!.longitude]}
-            eventHandlers={{ click: () => onSelect(img.id) }}
+            img={img}
+            onSelect={onSelect}
           >
             <Popup>
               <div className="flex items-center gap-2">
@@ -94,7 +122,7 @@ export default function MapView({ images, onSelect }: Props) {
                 </div>
               </div>
             </Popup>
-          </Marker>
+          </ZoomMarker>
         ))}
       </MapContainer>
     </motion.div>

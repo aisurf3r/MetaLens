@@ -65,10 +65,11 @@ function ZoomMarker({ img, onSelect, isSelected, children }: { img: ImageFile; o
 
 interface Props {
   images: ImageFile[];
+  selectedId?: string | null;
   onSelect: (id: string) => void;
 }
 
-export default function MapView({ images, onSelect }: Props) {
+export default function MapView({ images, selectedId, onSelect }: Props) {
   const gpsImages = images.filter((img) => {
     const lat = img.gps?.latitude;
     const lon = img.gps?.longitude;

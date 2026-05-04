@@ -160,7 +160,7 @@ export default function MapView({ images, selectedId, onSelect }: Props) {
             isSelected={img.id === selectedId}
             onSelect={onSelect}
           >
-            <Popup>
+            <Popup closeButton={false}>
               <div className="flex items-center gap-2">
                 <img src={img.url} alt={img.name} className="w-12 h-12 rounded object-cover" />
                 <div>

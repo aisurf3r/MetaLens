@@ -14,31 +14,36 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
 });
 
-function FitBounds({ positions }: { positions: [number, number][] }) {
+function MapController({
+  positions,
+  selectedPosition,
+}: {
+  positions: [number, number][];
+  selectedPosition: [number, number] | null;
+}) {
   const map = useMap();
-  const didFitRef = useRef(false);
   const signature = positions.map((p) => `${p[0].toFixed(5)},${p[1].toFixed(5)}`).join("|");
+  const selectedKey = selectedPosition ? `${selectedPosition[0].toFixed(5)},${selectedPosition[1].toFixed(5)}` : "";
+
   useEffect(() => {
-    // Only fit bounds when the SET of positions actually changes (not on every render).
-    // This prevents fighting with flyTo when the user clicks markers.
     const t = setTimeout(() => {
       try { map.invalidateSize(); } catch {}
-      if (positions.length === 0) return;
-      if (didFitRef.current) return;
-      didFitRef.current = true;
-      if (positions.length === 1) {
-        map.setView(positions[0], 13);
-      } else {
-        map.fitBounds(positions, { padding: [40, 40] });
+      if (selectedPosition) {
+        // Zoom in on the selected image's location
+        map.flyTo(selectedPosition, 16, { duration: 0.8 });
+      } else if (positions.length > 0) {
+        // No selection → show overview of all markers
+        if (positions.length === 1) {
+          map.setView(positions[0], 13);
+        } else {
+          map.flyToBounds(positions, { padding: [40, 40], duration: 0.8 });
+        }
       }
     }, 100);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [signature, map]);
-  // Reset when the actual set of positions changes
-  useEffect(() => {
-    didFitRef.current = false;
-  }, [signature]);
+  }, [selectedKey, signature, map]);
+
   return null;
 }
 

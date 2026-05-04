@@ -7,6 +7,7 @@ interface Props {
   selectedId: string | null;
   onSelect: (id: string) => void;
   onRemove: (id: string) => void;
+  onDeselect?: () => void;
 }
 
 function formatSize(bytes: number) {
@@ -15,9 +16,14 @@ function formatSize(bytes: number) {
   return (bytes / (1024 * 1024)).toFixed(1) + " MB";
 }
 
-export default function ImageGallery({ images, selectedId, onSelect, onRemove }: Props) {
+export default function ImageGallery({ images, selectedId, onSelect, onRemove, onDeselect }: Props) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+    <div
+      className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-3"
+      onClick={(e) => {
+        // Deselect when clicking the grid background (not a card)
+        if (e.target === e.currentTarget) onDeselect?.();
+      }}>
       <AnimatePresence mode="popLayout">
         {images.map((img) => (
           <motion.div

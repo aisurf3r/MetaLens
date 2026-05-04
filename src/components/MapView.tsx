@@ -16,11 +16,16 @@ L.Icon.Default.mergeOptions({
 
 function FitBounds({ positions }: { positions: [number, number][] }) {
   const map = useMap();
+  const didFitRef = useRef(false);
+  const signature = positions.map((p) => `${p[0].toFixed(5)},${p[1].toFixed(5)}`).join("|");
   useEffect(() => {
-    // Ensure tiles render correctly after mount/resize (critical on mobile)
+    // Only fit bounds when the SET of positions actually changes (not on every render).
+    // This prevents fighting with flyTo when the user clicks markers.
     const t = setTimeout(() => {
       try { map.invalidateSize(); } catch {}
       if (positions.length === 0) return;
+      if (didFitRef.current) return;
+      didFitRef.current = true;
       if (positions.length === 1) {
         map.setView(positions[0], 13);
       } else {
@@ -28,7 +33,12 @@ function FitBounds({ positions }: { positions: [number, number][] }) {
       }
     }, 100);
     return () => clearTimeout(t);
-  }, [positions, map]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signature, map]);
+  // Reset when the actual set of positions changes
+  useEffect(() => {
+    didFitRef.current = false;
+  }, [signature]);
   return null;
 }
 

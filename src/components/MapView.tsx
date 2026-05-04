@@ -144,7 +144,15 @@ export default function MapView({ images, selectedId, onSelect }: Props) {
             />
           </LayersControl.BaseLayer>
         </LayersControl>
-        <FitBounds positions={positions} />
+        <MapController
+          positions={positions}
+          selectedPosition={
+            (() => {
+              const sel = gpsImages.find((i) => i.id === selectedId);
+              return sel ? [sel.gps!.latitude, sel.gps!.longitude] : null;
+            })()
+          }
+        />
         {gpsImages.map((img) => (
           <ZoomMarker
             key={img.id}

@@ -73,7 +73,7 @@ function ZoomMarker({ img, onSelect, isSelected, children }: { img: ImageFile; o
           // Close any popup that may have auto-opened, then fly to target
           markerRef.current?.closePopup();
           onSelect(img.id);
-          map.flyTo([img.gps!.latitude, img.gps!.longitude], 16, { duration: 0.8 });
+          map.flyTo([img.gps!.latitude, img.gps!.longitude], 16, { duration: 1.8, easeLinearity: 0.15 });
         },
         mouseover: (e) => {
           e.target.openPopup();

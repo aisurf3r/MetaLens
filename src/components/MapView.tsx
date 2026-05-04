@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap, LayersControl } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -16,11 +16,16 @@ L.Icon.Default.mergeOptions({
 
 function FitBounds({ positions }: { positions: [number, number][] }) {
   const map = useMap();
+  const didFitRef = useRef(false);
+  const signature = positions.map((p) => `${p[0].toFixed(5)},${p[1].toFixed(5)}`).join("|");
   useEffect(() => {
-    // Ensure tiles render correctly after mount/resize (critical on mobile)
+    // Only fit bounds when the SET of positions actually changes (not on every render).
+    // This prevents fighting with flyTo when the user clicks markers.
     const t = setTimeout(() => {
       try { map.invalidateSize(); } catch {}
       if (positions.length === 0) return;
+      if (didFitRef.current) return;
+      didFitRef.current = true;
       if (positions.length === 1) {
         map.setView(positions[0], 13);
       } else {
@@ -28,7 +33,12 @@ function FitBounds({ positions }: { positions: [number, number][] }) {
       }
     }, 100);
     return () => clearTimeout(t);
-  }, [positions, map]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signature, map]);
+  // Reset when the actual set of positions changes
+  useEffect(() => {
+    didFitRef.current = false;
+  }, [signature]);
   return null;
 }
 
@@ -47,14 +57,24 @@ const greenIcon = new L.Icon({
 
 function ZoomMarker({ img, onSelect, isSelected, children }: { img: ImageFile; onSelect: (id: string) => void; isSelected: boolean; children: React.ReactNode }) {
   const map = useMap();
+  const markerRef = useRef<L.Marker>(null);
   return (
     <Marker
+      ref={markerRef}
       position={[img.gps!.latitude, img.gps!.longitude]}
       icon={isSelected ? greenIcon : new L.Icon.Default()}
       eventHandlers={{
         click: () => {
+          // Close any popup that may have auto-opened, then fly to target
+          markerRef.current?.closePopup();
           onSelect(img.id);
           map.flyTo([img.gps!.latitude, img.gps!.longitude], 16, { duration: 0.8 });
+        },
+        mouseover: (e) => {
+          e.target.openPopup();
+        },
+        mouseout: (e) => {
+          e.target.closePopup();
         },
       }}
     >

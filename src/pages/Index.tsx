@@ -87,6 +87,7 @@ const Index = () => {
                       selectedId={selectedId}
                       onSelect={setSelectedId}
                       onRemove={removeImage}
+                      onDeselect={() => setSelectedId(null)}
                     />
                   </div>
 

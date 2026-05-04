@@ -29,14 +29,14 @@ function MapController({
     const t = setTimeout(() => {
       try { map.invalidateSize(); } catch {}
       if (selectedPosition) {
-        // Zoom in on the selected image's location
-        map.flyTo(selectedPosition, 16, { duration: 0.8 });
+        // Zoom in on the selected image's location — slower, smoother
+        map.flyTo(selectedPosition, 16, { duration: 1.8, easeLinearity: 0.15 });
       } else if (positions.length > 0) {
         // No selection → show overview of all markers
         if (positions.length === 1) {
-          map.setView(positions[0], 13);
+          map.flyTo(positions[0], 13, { duration: 1.8, easeLinearity: 0.15 });
         } else {
-          map.flyToBounds(positions, { padding: [40, 40], duration: 0.8 });
+          map.flyToBounds(positions, { padding: [40, 40], duration: 1.8, easeLinearity: 0.15 });
         }
       }
     }, 100);
@@ -73,7 +73,7 @@ function ZoomMarker({ img, onSelect, isSelected, children }: { img: ImageFile; o
           // Close any popup that may have auto-opened, then fly to target
           markerRef.current?.closePopup();
           onSelect(img.id);
-          map.flyTo([img.gps!.latitude, img.gps!.longitude], 16, { duration: 0.8 });
+          map.flyTo([img.gps!.latitude, img.gps!.longitude], 16, { duration: 1.8, easeLinearity: 0.15 });
         },
         mouseover: (e) => {
           e.target.openPopup();

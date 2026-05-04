@@ -87,10 +87,11 @@ const Index = () => {
                       selectedId={selectedId}
                       onSelect={setSelectedId}
                       onRemove={removeImage}
+                      onDeselect={() => setSelectedId(null)}
                     />
                   </div>
 
-                  {isValidGps(selected?.gps) && (
+                  {images.some((i) => isValidGps(i.gps)) && (
                     <div>
                       <h2 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
                         <span className="w-1.5 h-1.5 rounded-full bg-accent" />
@@ -98,8 +99,8 @@ const Index = () => {
                       </h2>
                       <MapErrorBoundary>
                         <MapView
-                          images={images.filter(i => i.gps)}
-                          selectedId={selectedId}
+                          images={images.filter(i => isValidGps(i.gps))}
+                          selectedId={isValidGps(selected?.gps) ? selectedId : null}
                           onSelect={setSelectedId}
                         />
                       </MapErrorBoundary>

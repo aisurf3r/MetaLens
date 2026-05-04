@@ -98,7 +98,6 @@ const Index = () => {
                       </h2>
                       <MapErrorBoundary>
                         <MapView
-                          key={selected.id}
                           images={images.filter(i => i.gps)}
                           selectedId={selectedId}
                           onSelect={setSelectedId}

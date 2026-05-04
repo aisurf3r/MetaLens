@@ -57,14 +57,24 @@ const greenIcon = new L.Icon({
 
 function ZoomMarker({ img, onSelect, isSelected, children }: { img: ImageFile; onSelect: (id: string) => void; isSelected: boolean; children: React.ReactNode }) {
   const map = useMap();
+  const markerRef = useRef<L.Marker>(null);
   return (
     <Marker
+      ref={markerRef}
       position={[img.gps!.latitude, img.gps!.longitude]}
       icon={isSelected ? greenIcon : new L.Icon.Default()}
       eventHandlers={{
         click: () => {
+          // Close any popup that may have auto-opened, then fly to target
+          markerRef.current?.closePopup();
           onSelect(img.id);
           map.flyTo([img.gps!.latitude, img.gps!.longitude], 16, { duration: 0.8 });
+        },
+        mouseover: (e) => {
+          e.target.openPopup();
+        },
+        mouseout: (e) => {
+          e.target.closePopup();
         },
       }}
     >
